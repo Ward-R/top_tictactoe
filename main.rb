@@ -1,8 +1,8 @@
 class Board
-  attr_accessor :board, :player_position, :computer_position
-  def initialize(player_position = 0, computer_position = 0)
-    @player_position = player_position
-    @computer_position = computer_position
+  #attr_accessor :board, :player_position, :computer_position
+  def initialize()
+    # @player_position = player_position
+    # @computer_position = computer_position
     @board_grid = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
   end
 
@@ -39,30 +39,99 @@ class Board
 end
 
 
-game_1 = Board.new()
-puts game_1.board_display
-game_1.place_x(5)
-puts "\n\n"
-puts game_1.board_display
-game_1.place_o(8)
-puts "\n\n"
-puts game_1.board_display
+class Game
+  attr_accessor :board, :player_position, :computer_position
+  def initialize(player_position = 0, computer_position = 0)
+    @player_position = player_position
+    @computer_position = computer_position #not sure where to put these yet...
+    @board = Board.new
+    @human_player = HumanPlayer.new
+    @computer_player = ComputerPlayer.new
+    @game_over = false
+  end
+
+  def run
+    # Main game loop
+    puts "Welcome to Tic-Tac-Toe!"
+    puts "Lets roll to see who goes first"
+    goes_first
+    puts "Human is #{@human_player.token}"
+    puts "Computer is #{@computer_player.token}"
+    puts @board.board_display
+    until @game_over
+      puts "Human - Choose a location for your token"
+      print ">> ".chomp
+      @move = gets.chomp
+      puts @move
+      #input
+      #update
+      #display board
+    end
+    #display game over
+  end
 
 
-# new_game.board_grid[0][2] = O 
-# puts new_game
+  def user_input
+    #get input from player
+  end
+
+  def goes_first
+    random_binary = rand(2) # outputs 0 or 1
+    if random_binary == 0
+      puts "Human got heads and goes first as 'X'"
+      @human_player.is_first = true
+    else
+      puts "Computer got heads and goes first as 'X'"
+      @computer_player.is_first = true
+    end
+  end
+end
+
+class Player 
+  attr_accessor :is_first
+  def initialize
+    @is_first = false
+  end
+end
+
+class HumanPlayer < Player
+  attr_reader :token #so token can be accessed outside of class
+  def token
+    if @is_first == true
+      @token = "X"
+    else
+      @token = "O"
+    end
+  end
+end
+
+class ComputerPlayer < Player
+  attr_reader :token #so token can be accessed outside of class
+  def token
+    if @is_first == true
+      @token = "X"
+    else
+      @token = "O"
+    end
+  end
+
+  def computer_logic
+    # code AI here
+  end
+end
+
+game = Game.new
+game.run
 
 
-#class player
-# human player
-# Computer player
 
-#class HumanPlayer
-#get the human player choice and give it to game
 
-#class ComputerPlayer
-#run the computer choice logic
 
-#class Game
-#run the game logic
-# update and display board
+# game_1 = Board.new()
+# puts game_1.board_display
+# game_1.place_x(5)
+# puts "\n\n"
+# puts game_1.board_display
+# game_1.place_o(8)
+# puts "\n\n"
+# puts game_1.board_display
