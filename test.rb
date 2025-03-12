@@ -21,18 +21,23 @@ class Board
     return board_display
   end
 end
+  
 
 class Game
-  attr_accessor :board
-  def initialize
+  attr_accessor :board, 
+  def initialize 
+    puts "Game initialize called: #{self}" # Debugging
     @board = Board.new
     @human_player = HumanPlayer.new
     @computer_player = ComputerPlayer.new
     @game_over = false
+    puts "Human Player: #{@human_player}" # debugging
+    puts "Computer Player: #{@computer_player}" #debugging
   end
 
   def run
     # Main game loop
+    puts "Game run called: #{self}" # Debugging
     puts "Welcome to Tic-Tac-Toe!"
     puts "Lets roll to see who goes first"
     goes_first
@@ -40,14 +45,26 @@ class Game
     puts "Computer is #{@computer_player.token}"
     puts @board.board_display
     until @game_over
-      # need to code which player goes first based on above. right now human always goes and add break if
+      # if @human_player.is_first == true
+      #   @human_player.human_move(@board)
+      #   break if win_condition
+      #   @computer_player.computer_move(@board)
+      #   break if win_condition
+      # elsif @computer_player.is_first == true
+      #   @computer_player.computer_move(@board)
+      #   break if win_condition
+      #   @human_player.human_move(@board)
+      #   break if win_condition
+      # end
       @human_player.human_move(@board)
-      win_condition
-      @computer_player.computer_move(@board)
-      win_condition
     end
     #display game over
   end
+
+
+  # def user_input
+  #   #get input from player
+  # end
 
   def goes_first
     random_binary = rand(2) # outputs 0 or 1
@@ -64,7 +81,6 @@ class Game
     end
   end
 
-  #*************** change this player_token in the future. it is confusing with the other token********
   # The following 3 checks check rows, columns, and diagonals for 3 consecutive tokens
   def check_rows(player_token)
     @board.board_grid.each do |row|
@@ -93,7 +109,7 @@ class Game
     return false
   end
 
-  def win_condition
+  def win_condition # Refactor this to be more sophisticated. take in token value, and display winner with 3 checks only.
     if check_rows("X")
       puts "X wins"
       @game_over = true
