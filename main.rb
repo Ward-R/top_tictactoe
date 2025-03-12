@@ -1,5 +1,5 @@
 class Board
-  #attr_accessor :board, :player_position, :computer_position
+  attr_reader :board_grid
   def initialize()
     # @player_position = player_position
     # @computer_position = computer_position
@@ -7,7 +7,6 @@ class Board
   end
 
   def board_display
-    #board = "#{@board_grid[0][0]} | #{@board_grid[0][1]} | #{@board_grid[0][2]}\n--+---+--\n#{@board_grid[1][0]} | #{@board_grid[1][1]} | #{@board_grid[1][2]}\n--+---+--\n#{@board_grid[2][0]} | #{@board_grid[2][1]} | #{@board_grid[2][2]}"
     board = @board_grid.map { |row| row.join(' | ') }.join("\n--+---+--\n") 
     return board
   end
@@ -35,7 +34,6 @@ class Board
     end
     return board_display
   end
-
 end
 
 
@@ -60,9 +58,11 @@ class Game
     puts @board.board_display
     until @game_over
       puts "Human - Choose a location for your token"
-      print ">> ".chomp
-      @move = gets.chomp
-      puts @move
+      print ">> "
+      @board.place_x(gets.chomp.to_i)
+      puts @board.board_display
+      win_condition
+      
       #input
       #update
       #display board
@@ -83,6 +83,47 @@ class Game
     else
       puts "Computer got heads and goes first as 'X'"
       @computer_player.is_first = true
+    end
+  end
+
+  # The following 3 checks check rows, columns, and diagonals for 3 consecutive tokens
+  def check_rows(player_token)
+    @board.board_grid.each do |row|
+      if row.all? { |cell| cell == player_token } == true
+        return true
+      end
+    end
+    return false
+  end
+
+  def check_columns(player_token)
+    @board.board_grid.transpose.each do |row| # This flips the columns into rows to make it easy to iterate and check
+      if row.all? { |cell| cell == player_token } == true
+        return true
+      end
+    end
+    return false
+  end
+
+  def check_diagonals(player_token)
+    if @board.board_grid[0][0] == player_token && @board.board_grid[1][1] == player_token && @board.board_grid[2][2] == player_token
+      return true
+    elsif @board.board_grid[0][2] == player_token && @board.board_grid[1][1] == player_token && @board.board_grid[2][0] == player_token
+      return true
+    end
+    return false
+  end
+
+  def win_condition
+    if check_rows("X")
+      puts "X wins"
+      @game_over = true
+    elsif check_columns("X")
+      puts "X wins"
+      @game_over = true
+    elsif check_diagonals("X")
+      puts "X wins"
+      @game_over = true
     end
   end
 end
@@ -118,6 +159,9 @@ class ComputerPlayer < Player
   def computer_logic
     # code AI here
   end
+
+
+
 end
 
 game = Game.new
