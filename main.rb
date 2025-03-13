@@ -39,14 +39,36 @@ class Game
     puts "Human is #{@human_player.token}"
     puts "Computer is #{@computer_player.token}"
     puts @board.board_display
-    until @game_over
-      # need to code which player goes first based on above. right now human always goes and add break if
-      @human_player.human_move(@board)
-      win_condition
-      @computer_player.computer_move(@board)
-      win_condition
+    
+    #sets starting order
+    if @human_player.is_first 
+      current_player = @human_player
+    else
+      current_player = @computer_player
     end
-    #display game over
+
+    until @game_over
+
+      # Runs a player logic to set a token
+      if current_player == @human_player
+        @human_player.human_move(@board)
+      else
+        @computer_player.computer_move(@board)
+      end
+
+      # Check if there is a win condition, ends game if so.
+      if win_condition
+        break
+      end
+
+      # Switches players for next round of token placement
+      if current_player == @human_player
+        current_player = @computer_player
+      else
+        current_player = @human_player
+      end
+    end
+    puts "Game over, thanks for playing!"
   end
 
   def goes_first

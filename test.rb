@@ -45,18 +45,17 @@ class Game
     puts "Computer is #{@computer_player.token}"
     puts @board.board_display
     until @game_over
-      # if @human_player.is_first == true
-      #   @human_player.human_move(@board)
-      #   break if win_condition
-      #   @computer_player.computer_move(@board)
-      #   break if win_condition
-      # elsif @computer_player.is_first == true
-      #   @computer_player.computer_move(@board)
-      #   break if win_condition
-      #   @human_player.human_move(@board)
-      #   break if win_condition
-      # end
-      @human_player.human_move(@board)
+      if @human_player.is_first == true
+        @human_player.human_move(@board)
+        break if win_condition
+        @computer_player.computer_move(@board)
+        break if win_condition
+      elsif @computer_player.is_first == true
+        @computer_player.computer_move(@board)
+        break if win_condition
+        @human_player.human_move(@board)
+        break if win_condition
+      end
     end
     #display game over
   end
