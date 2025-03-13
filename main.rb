@@ -33,6 +33,7 @@ class Game
 
   def run
     # Main game loop
+    count = 0 # turn counter for draw condition
     puts "Welcome to Tic-Tac-Toe!"
     puts "Lets roll to see who goes first"
     goes_first
@@ -55,9 +56,16 @@ class Game
       else
         @computer_player.computer_move(@board)
       end
+      count += 1
 
       # Check if there is a win condition, ends game if so.
       if win_condition
+        break
+      end
+
+      # End game if draw
+      if count == 9
+        puts "Game is a draw"
         break
       end
 
