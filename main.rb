@@ -205,13 +205,22 @@ class ComputerPlayer < Player
     # puts board.board_display
     
     puts "Computer turn"
-
+    sleep(1)
     #win if next move completes 3 computer tokens in a row/col/diag do that
     case
     when place_to_win
       # logic to place token in remaining spot
     when place_to_block_win
       # logic to place token to block win block win
+    when place_to_block_fork
+    
+    when place_centre(board)
+      board.place_token(5, @token)
+      puts board.board_display
+
+    when place_opposite_corner
+
+    when place_empty_side
     else # currently this is a test method to make the comp to something
       temp_comp_move(board)
     
@@ -245,15 +254,31 @@ class ComputerPlayer < Player
   # need to get valid_move from board.valid_move?(5)
 
   
-  def place_to_win
-
+  def place_to_win#(board)
+    # place in location to win game
   end
 
-  def place_to_block_win
+  def place_to_block_win#(board)
     # opposite of place_to_win
   end
 
+  def place_to_block_fork#(board)
+    # place in location to block a fork
+  end
 
+  def place_centre(board)
+    # Place if centre is open
+    if board.valid_move?(5) == true
+      return true
+    end
+  end
+
+  def place_opposite_corner#(board)
+  end
+
+  def place_empty_side#(board)
+    # top/bottom/left/right sides
+  end
 end
 
 game = Game.new
