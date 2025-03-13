@@ -9,16 +9,32 @@ class Board
     return board
   end
 
-  def place_token(location, token)
-    @board_grid.each_with_index do |row, row_index|
-      row.each_with_index do |cell, cell_index|
-        if cell == location
-          @board_grid[row_index][cell_index] = token
-          return board_display # Return the updated board display
+  # Checks that spot is open on board
+  def valid_move?(location)
+    @board_grid.each do |row|
+      row.each do |cell|
+        if cell == location && cell.is_a?(Integer)
+          return true # Valid move
         end
       end
     end
-    return board_display
+    return false # Invalid move
+  end
+
+  def place_token(location, token)
+    if valid_move?(location)
+      @board_grid.each_with_index do |row, row_index|
+        row.each_with_index do |cell, cell_index|
+          if cell == location
+            @board_grid[row_index][cell_index] = token
+            return board_display # Return the updated board display
+          end
+        end
+      end
+    else
+      puts "Invalid move! That space is already taken."
+      return board_display
+    end
   end
 end
 
@@ -162,10 +178,19 @@ class HumanPlayer < Player
   attr_reader :token #so token can be accessed outside of class
   
   def human_move(board)
-    puts "Human - Choose a location for your token"
-    print ">> "
-    board.place_token(gets.chomp.to_i, @token)
-    puts board.board_display
+    loop do
+      puts "Human - Choose a location for your token"
+      print ">> "
+      location = gets.chomp.to_i
+
+      if board.valid_move?(location)
+        board.place_token(location, @token)
+        puts board.board_display
+        break # Exit after valid move
+      else
+        puts "Invalid move! Please choose an available location."
+      end
+    end
   end
 end
 
@@ -174,22 +199,23 @@ class ComputerPlayer < Player
   
   def computer_move(board)
     #temporary human input simulating computer move
-    puts "Computer (human simulated) - Choose a location for your token"
-    print ">> "
-    board.place_token(gets.chomp.to_i, @token)
-    puts board.board_display
+    # puts "Computer (human simulated) - Choose a location for your token"
+    # print ">> "
+    # board.place_token(gets.chomp.to_i, @token)
+    # puts board.board_display
     
-    #win if next move completes 3 computer tokens in a row do that
-    # def check_rows(player_token)
-    #   @board.board_grid.each do |row|
-    #     if row.all? { |cell| cell == player_token } == true
-    #       return true
-    #     end
-    #   end
-    #   return false
-    # end
+    puts "Computer turn"
 
-    #block elsif human has any 2 in one row block code:
+    #win if next move completes 3 computer tokens in a row/col/diag do that
+    case
+    when place_to_win
+      # logic to place token in remaining spot
+    when place_to_block_win
+      # logic to place token to block win block win
+    else # currently this is a test method to make the comp to something
+      temp_comp_move(board)
+    
+    #block elsif human has any 2 in one row block code: this is opposite of above code
 
     #block fork
 
@@ -201,8 +227,33 @@ class ComputerPlayer < Player
     #empty corner
 
     #empty side top/bottom/left/right maybe split this?
-    
+    end
   end
+
+  # This is a temporary method just to test the computer while i make other methods for logid
+  def temp_comp_move(board)
+    board.board_grid.flatten.each do |cell|
+      if cell.is_a?(Integer) && board.valid_move?(cell)
+        board.place_token(cell, @token)
+        puts board.board_display
+        return # Exit after placing the token
+      end
+    end
+    puts "Error: No valid moves found." # Should rarely happen
+  end
+
+  # need to get valid_move from board.valid_move?(5)
+
+  
+  def place_to_win
+
+  end
+
+  def place_to_block_win
+    # opposite of place_to_win
+  end
+
+
 end
 
 game = Game.new
