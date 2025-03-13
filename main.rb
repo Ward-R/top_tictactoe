@@ -208,8 +208,29 @@ class ComputerPlayer < Player
     sleep(1)
     #win if next move completes 3 computer tokens in a row/col/diag do that
     case
-    when place_to_win
+    when place_to_win_hor(board)
       # logic to place token in remaining spot
+      #puts "I should have put in the winning spot **logic test**"
+      board.board_grid.each_with_index do |row, row_index|
+        if row.count(@token) == 2
+          empty_cell = row.find { |cell| cell.is_a?(Integer) }
+          if empty_cell
+            board.place_token(empty_cell, @token)
+            puts board.board_display
+          end
+        end
+      end
+
+    when place_to_win_vert(board)
+      board.board_grid.transpose.each_with_index do |row, row_index|
+        if row.count(@token) == 2
+          empty_cell = row.find { |cell| cell.is_a?(Integer) }
+          if empty_cell
+            board.place_token(empty_cell, @token)
+            puts board.board_display
+          end
+        end
+      end
     when place_to_block_win
       # logic to place token to block win block win
     when place_to_block_fork
@@ -254,9 +275,38 @@ class ComputerPlayer < Player
   # need to get valid_move from board.valid_move?(5)
 
   
-  def place_to_win#(board)
+  def place_to_win_hor(board) #currently knows if there are 2 tokens, doesn't find empty cell.
     # place in location to win game
+    board.board_grid.each do |row|
+      if row.count { |cell| cell == @token} == 2
+        return true
+      end
+    end
+    return false
   end
+
+  def place_to_win_vert(board)
+    # place in location to win game
+    board.board_grid.transpose.each do |row|
+      if row.count { |cell| cell == @token} == 2
+        return true
+      end
+    end
+    return false
+  end
+
+  # ai example below:
+  # def place_to_win(board)
+  #   # Check rows
+  #   board.board_grid.each_with_index do |row, row_index|
+  #     if row.count(@token) == 2
+  #       empty_cell = row.find { |cell| cell.is_a?(Integer) }
+  #       if empty_cell
+  #         board.place_token(empty_cell, @token)
+  #         return true
+  #       end
+  #     end
+  #   end
 
   def place_to_block_win#(board)
     # opposite of place_to_win
