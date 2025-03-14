@@ -296,9 +296,79 @@ class ComputerPlayer < Player
 
     # fork conditions are pretty complicated. Not implemented in this version.
     # ****************************************
-    elsif place_to_fork  
-    elsif place_to_block_fork
-    # ****************************************
+    elsif place_to_fork(board)
+      left_corners = [board.board_grid[0][0], board.board_grid[2][2]] # this name is poor, they are diagonal corners starting from the top left
+      right_corners = [board.board_grid[0][2], board.board_grid[2][0]]
+      top_left_v = [board.board_grid[1][0], board.board_grid[0][0], board.board_grid[0][1]]
+      bottom_right_v = [board.board_grid[2][1], board.board_grid[2][2], board.board_grid[1][2]]
+      top_right_v = [board.board_grid[0][1], board.board_grid[0][2], board.board_grid[1][2]]
+      bottom_left_v = [board.board_grid[1][0], board.board_grid[2][0], board.board_grid[2][1]]
+      if left_corners.all? { |cell| cell == @token } && top_right_v.all? { |cell| cell.is_a?(Integer)}
+        empty_cell = board.board_grid[0][2]
+        if empty_cell && board.valid_move?(empty_cell)
+          board.place_token(empty_cell, @token)
+          puts board.board_display
+          return
+        end
+      elsif left_corners.all? { |cell| cell == @token } && bottom_left_v.all? { |cell| cell.is_a?(Integer)}
+        empty_cell = board.board_grid[2][0]
+        if empty_cell && board.valid_move?(empty_cell)
+          board.place_token(empty_cell, @token)
+          puts board.board_display
+          return
+        end
+      elsif right_corners.all? { |cell| cell == @token } && top_left_v.all? { |cell| cell.is_a?(Integer)}
+        empty_cell = board.board_grid[0][0]
+        if empty_cell && board.valid_move?(empty_cell)
+          board.place_token(empty_cell, @token)
+          puts board.board_display
+          return
+        end
+      elsif right_corners.all? { |cell| cell == @token } && bottom_right_v.all? { |cell| cell.is_a?(Integer)}
+        empty_cell = board.board_grid[2][2]
+        if empty_cell && board.valid_move?(empty_cell)
+          board.place_token(empty_cell, @token)
+          puts board.board_display
+          return
+        end
+      end
+    
+    elsif place_to_block_fork(board)
+      left_corners = [board.board_grid[0][0], board.board_grid[2][2]] # this name is poor, they are diagonal corners starting from the top left
+      right_corners = [board.board_grid[0][2], board.board_grid[2][0]]
+      top_left_v = [board.board_grid[1][0], board.board_grid[0][0], board.board_grid[0][1]]
+      bottom_right_v = [board.board_grid[2][1], board.board_grid[2][2], board.board_grid[1][2]]
+      top_right_v = [board.board_grid[0][1], board.board_grid[0][2], board.board_grid[1][2]]
+      bottom_left_v = [board.board_grid[1][0], board.board_grid[2][0], board.board_grid[2][1]]
+      if left_corners.all? { |cell| cell == @human_player.token } && top_right_v.all? { |cell| cell.is_a?(Integer)}
+        empty_cell = board.board_grid[0][2]
+        if empty_cell && board.valid_move?(empty_cell)
+          board.place_token(empty_cell, @token)
+          puts board.board_display
+          return
+        end
+      elsif left_corners.all? { |cell| cell == @human_player.token } && bottom_left_v.all? { |cell| cell.is_a?(Integer)}
+        empty_cell = board.board_grid[2][0]
+        if empty_cell && board.valid_move?(empty_cell)
+          board.place_token(empty_cell, @token)
+          puts board.board_display
+          return
+        end
+      elsif right_corners.all? { |cell| cell == @human_player.token } && top_left_v.all? { |cell| cell.is_a?(Integer)}
+        empty_cell = board.board_grid[0][0]
+        if empty_cell && board.valid_move?(empty_cell)
+          board.place_token(empty_cell, @token)
+          puts board.board_display
+          return
+        end
+      elsif right_corners.all? { |cell| cell == @human_player.token } && bottom_right_v.all? { |cell| cell.is_a?(Integer)}
+        empty_cell = board.board_grid[2][2]
+        if empty_cell && board.valid_move?(empty_cell)
+          board.place_token(empty_cell, @token)
+          puts board.board_display
+          return
+        end
+      end
     
     elsif place_centre(board)
       board.place_token(5, @token)
@@ -423,9 +493,6 @@ class ComputerPlayer < Player
     end
     return false
   end
-
-  
-  
   def place_to_block_win_diag(board)
     # opposite of place_to_win
     left_diagonal = [board.board_grid[0][0], board.board_grid[1][1], board.board_grid[2][2]]
@@ -440,16 +507,49 @@ class ComputerPlayer < Player
     return false
   end
 
+  def place_to_fork(board) # basic fork scenario considered only. may be others?
+    left_corners = [board.board_grid[0][0], board.board_grid[2][2]] # this name is poor, they are diagonal corners starting from the top left
+    right_corners = [board.board_grid[0][2], board.board_grid[2][0]]
+    top_left_v = [board.board_grid[1][0], board.board_grid[0][0], board.board_grid[0][1]]
+    bottom_right_v = [board.board_grid[2][1], board.board_grid[2][2], board.board_grid[1][2]]
+    top_right_v = [board.board_grid[0][1], board.board_grid[0][2], board.board_grid[1][2]]
+    bottom_left_v = [board.board_grid[1][0], board.board_grid[2][0], board.board_grid[2][1]]
+    if left_corners.all? { |cell| cell == @token } && top_right_v.all? { |cell| cell.is_a?(Integer)}
+      puts "place_to_fork true" #debug
+      return true
+    elsif left_corners.all? { |cell| cell == @token } && bottom_left_v.all? { |cell| cell.is_a?(Integer)}
+      puts "place_to_fork true" #debug
+      return true
+    elsif right_corners.all? { |cell| cell == @token } && top_left_v.all? { |cell| cell.is_a?(Integer)}
+      puts "place_to_fork true" #debug
+      return true
+    elsif right_corners.all? { |cell| cell == @token } && bottom_right_v.all? { |cell| cell.is_a?(Integer)}
+      puts "place_to_fork true" #debug
+      return true
+    end
+  end
 
-  # fork conditions are pretty complicated. if implemented, computer will be difficult to beat. Not implemented in this version.
-  # ****************************************
-  def place_to_fork#(board)
-    # place in location to cause fork scenario
+  def place_to_block_fork(board)
+    left_corners = [board.board_grid[0][0], board.board_grid[2][2]] # this name is poor, they are diagonal corners starting from the top left
+    right_corners = [board.board_grid[0][2], board.board_grid[2][0]]
+    top_left_v = [board.board_grid[1][0], board.board_grid[0][0], board.board_grid[0][1]]
+    bottom_right_v = [board.board_grid[2][1], board.board_grid[2][2], board.board_grid[1][2]]
+    top_right_v = [board.board_grid[0][1], board.board_grid[0][2], board.board_grid[1][2]]
+    bottom_left_v = [board.board_grid[1][0], board.board_grid[2][0], board.board_grid[2][1]]
+    if left_corners.all? { |cell| cell == @human_player.token } && top_right_v.all? { |cell| cell.is_a?(Integer)}
+      puts "place_to_block_fork true" #debug
+      return true
+    elsif left_corners.all? { |cell| cell == @human_player.token } && bottom_left_v.all? { |cell| cell.is_a?(Integer)}
+      puts "place_to_block_fork true" #debug
+      return true
+    elsif right_corners.all? { |cell| cell == @human_player.token } && top_left_v.all? { |cell| cell.is_a?(Integer)}
+      puts "place_to_block_fork true" #debug
+      return true
+    elsif right_corners.all? { |cell| cell == @human_player.token } && bottom_right_v.all? { |cell| cell.is_a?(Integer)}
+      puts "place_to_block_fork true" #debug
+      return true
+    end
   end
-  def place_to_block_fork#(board)
-    # place in location to block a fork
-  end
-  # ****************************************
 
   def place_centre(board)
     # Place if centre is open
