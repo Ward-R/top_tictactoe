@@ -263,16 +263,49 @@ class ComputerPlayer < Player
         end
       elsif all_sides.any? { |cell| cell == @human_player.token  }
         #elsif player side
-        random_number = rand(1..1) #change back to (1..3)
+        random_number = rand(1..3)
+        player_side_location = all_sides.find { |cell| cell == @human_player.token }
         case random_number
         when 1
           board.place_token(5, @token)
           puts board.board_display
           puts "second move center due to side case 1" #debug
-        #when 2
-
-        #when 3
-        #put either centre, corner next to x, or opposite edge mark (random these)
+        when 2
+          if board.board_grid[1][0] == @human_player.token
+            board.place_token(1, @token)
+            puts board.board_display
+            return
+          elsif board.board_grid[1][2] == @human_player.token
+            board.place_token(9, @token)
+            puts board.board_display
+            return
+          elsif board.board_grid[0][1] == @human_player.token
+            board.place_token(3, @token)
+            puts board.board_display
+            return
+          elsif board.board_grid[2][1] == @human_player.token
+            board.place_token(7, @token)
+            puts board.board_display
+            return
+          end
+        when 3
+          if board.board_grid[1][0] == @human_player.token
+            board.place_token(6, @token)
+            puts board.board_display
+            return
+          elsif board.board_grid[1][2] == @human_player.token
+            board.place_token(4, @token)
+            puts board.board_display
+            return
+          elsif board.board_grid[0][1] == @human_player.token
+            board.place_token(8, @token)
+            puts board.board_display
+            return
+          elsif board.board_grid[2][1] == @human_player.token
+            board.place_token(2, @token)
+            puts board.board_display
+            return
+          end
         end
       end 
     elsif place_to_win_hor(board)
