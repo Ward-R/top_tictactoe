@@ -43,7 +43,7 @@ class Game
   def initialize
     @board = Board.new
     @human_player = HumanPlayer.new
-    @computer_player = ComputerPlayer.new
+    @computer_player = ComputerPlayer.new(@human_player)
     @game_over = false
   end
 
@@ -195,7 +195,12 @@ class HumanPlayer < Player
 end
 
 class ComputerPlayer < Player
-  attr_reader :token #so token can be accessed outside of class
+  attr_reader :token, :human_player #so token can be accessed outside of class
+  
+  def initialize(human_player) # Accept human_player as an argument
+    super()
+    @human_player = human_player # Store the human_player
+  end
   
   def computer_move(board)
     #temporary human input simulating computer move
@@ -210,7 +215,6 @@ class ComputerPlayer < Player
     case
     when place_to_win_hor(board)
       # logic to place token in remaining spot
-      #puts "I should have put in the winning spot **logic test**"
       board.board_grid.each_with_index do |row, row_index|
         if row.count(@token) == 2
           empty_cell = row.find { |cell| cell.is_a?(Integer) }
@@ -231,6 +235,24 @@ class ComputerPlayer < Player
           end
         end
       end
+
+    when place_to_win_diag(board)
+      if [board.board_grid[0][0] == @token, board.board_grid[1][1] == @token, board.board_grid[2][2] == @token].count(true) == 2
+        left_diagonal = [board.board_grid[0][0], board.board_grid[1][1], board.board_grid[2][2]]
+        empty_cell = left_diagonal.find { |cell| cell.is_a?(Integer) }
+        if empty_cell
+          board.place_token(empty_cell, @token)
+          puts board.board_display
+        end
+      elsif [board.board_grid[0][2] == @token, board.board_grid[1][1] == @token, board.board_grid[2][0] == @token].count(true) == 2
+        right_diagonal = [board.board_grid[0][2], board.board_grid[1][1], board.board_grid[2][0]]
+        empty_cell = right_diagonal.find { |cell| cell.is_a?(Integer) }
+        if empty_cell
+          board.place_token(empty_cell, @token)
+          puts board.board_display
+        end
+      end
+
     when place_to_block_win
       # logic to place token to block win block win
     when place_to_block_fork
@@ -239,7 +261,22 @@ class ComputerPlayer < Player
       board.place_token(5, @token)
       puts board.board_display
 
-    when place_opposite_corner
+    when place_opposite_corner(board)
+      if board.board_grid[0][0] == @human_player.token || board.board_grid[2][2] == @human_player.token
+        left_diagonal = [board.board_grid[0][0], board.board_grid[2][2]]
+        empty_cell = left_diagonal.find { |cell| cell.is_a?(Integer) }
+        if empty_cell
+          board.place_token(empty_cell, @token)
+          puts board.board_display
+        end
+      elsif board.board_grid[0][2] == @human_player.token || board.board_grid[2][0] == @human_player.token
+        right_diagonal = [board.board_grid[0][2], board.board_grid[2][0]]
+        empty_cell = right_diagonal.find { |cell| cell.is_a?(Integer) }
+        if empty_cell
+          board.place_token(empty_cell, @token)
+          puts board.board_display
+        end
+      end
 
     when place_empty_side
     else # currently this is a test method to make the comp to something
@@ -275,8 +312,8 @@ class ComputerPlayer < Player
   # need to get valid_move from board.valid_move?(5)
 
   
-  def place_to_win_hor(board) #currently knows if there are 2 tokens, doesn't find empty cell.
-    # place in location to win game
+  def place_to_win_hor(board)
+    # checks if horizontal move will win game
     board.board_grid.each do |row|
       if row.count { |cell| cell == @token} == 2
         return true
@@ -286,7 +323,7 @@ class ComputerPlayer < Player
   end
 
   def place_to_win_vert(board)
-    # place in location to win game
+    # checks if vertical move will win game
     board.board_grid.transpose.each do |row|
       if row.count { |cell| cell == @token} == 2
         return true
@@ -295,18 +332,14 @@ class ComputerPlayer < Player
     return false
   end
 
-  # ai example below:
-  # def place_to_win(board)
-  #   # Check rows
-  #   board.board_grid.each_with_index do |row, row_index|
-  #     if row.count(@token) == 2
-  #       empty_cell = row.find { |cell| cell.is_a?(Integer) }
-  #       if empty_cell
-  #         board.place_token(empty_cell, @token)
-  #         return true
-  #       end
-  #     end
-  #   end
+  def place_to_win_diag(board)
+    if [board.board_grid[0][0] == @token, board.board_grid[1][1] == @token, board.board_grid[2][2] == @token].count(true) == 2
+      return true
+    elsif [board.board_grid[0][2] == @token, board.board_grid[1][1] == @token, board.board_grid[2][0] == @token].count(true) == 2
+      return true
+    end
+    return false
+  end
 
   def place_to_block_win#(board)
     # opposite of place_to_win
@@ -323,7 +356,12 @@ class ComputerPlayer < Player
     end
   end
 
-  def place_opposite_corner#(board)
+  def place_opposite_corner(board)
+    if board.board_grid[0][0] == @human_player.token || board.board_grid[2][2] == @human_player.token
+      return true
+    elsif board.board_grid[0][2] == @human_player.token || board.board_grid[2][0] == @human_player.token
+      return true
+    end
   end
 
   def place_empty_side#(board)
