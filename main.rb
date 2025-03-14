@@ -275,9 +275,30 @@ class ComputerPlayer < Player
           end
         end
       end
-    elsif place_to_block_win_diag
-    
+    elsif place_to_block_win_diag(board)
+      left_diagonal = [board.board_grid[0][0], board.board_grid[1][1], board.board_grid[2][2]]
+      right_diagonal= [board.board_grid[0][2], board.board_grid[1][1], board.board_grid[2][0]]
+      if left_diagonal.count { |cell| cell == @human_player.token} == 2 && left_diagonal.any? { |cell| cell.is_a?(Integer) }
+        empty_cell = left_diagonal.find { |cell| cell.is_a?(Integer) }
+        if empty_cell && board.valid_move?(empty_cell)
+          board.place_token(empty_cell, @token)
+          puts board.board_display
+          return
+        end
+      elsif right_diagonal.count { |cell| cell == @human_player.token} == 2 && right_diagonal.any? { |cell| cell.is_a?(Integer) }
+        empty_cell = right_diagonal.find { |cell| cell.is_a?(Integer) }
+        if empty_cell && board.valid_move?(empty_cell)
+          board.place_token(empty_cell, @token)
+          puts board.board_display
+          return
+        end
+      end
+
+    # fork conditions are pretty complicated. Not implemented in this version.
+    # ****************************************
+    elsif place_to_fork  
     elsif place_to_block_fork
+    # ****************************************
     
     elsif place_centre(board)
       board.place_token(5, @token)
@@ -313,12 +334,6 @@ class ComputerPlayer < Player
           return
         end
       end
-      
-      # if empty_cell && board.valid_move?(empty_cell)
-      #   board.place_token(empty_cell, @token)
-      #   puts board.board_display
-      #   return
-      # end
 
     elsif place_empty_side
 
@@ -368,15 +383,27 @@ class ComputerPlayer < Player
 
   def place_to_win_diag(board)
     left_diagonal = [board.board_grid[0][0], board.board_grid[1][1], board.board_grid[2][2]]
-    right_diagonal= [board.board_grid[0][2], board.board_grid[1][1], board.board_grid[2][0]]
-    if left_diagonal == 2 && left_diagonal.any? { |cell| cell.is_a?(Integer) }
+    right_diagonal = [board.board_grid[0][2], board.board_grid[1][1], board.board_grid[2][0]]
+    if left_diagonal.count { |cell| cell == @token} == 2 && left_diagonal.any? { |cell| cell.is_a?(Integer) } 
       puts "place_to_win_diagL is true" #debug
       return true
-    elsif right_diagonal == 2 && right_diagonal.any? { |cell| cell.is_a?(Integer) }
-      puts "place_to_win_diagr is true" #debug
+    elsif right_diagonal.count { |cell| cell == @token} == 2 && right_diagonal.any? { |cell| cell.is_a?(Integer) } 
+      puts "place_to_win_diagL is true" #debug
       return true
     end
     return false
+  
+
+    
+    # I don't know what happened, but i think the code below is wrong.
+    # if left_diagonal == 2 && left_diagonal.any? { |cell| cell.is_a?(Integer) }
+    #   puts "place_to_win_diagL is true" #debug
+    #   return true
+    # elsif right_diagonal == 2 && right_diagonal.any? { |cell| cell.is_a?(Integer) }
+    #   puts "place_to_win_diagr is true" #debug
+    #   return true
+    # end
+    # return false
   end
 
   def place_to_block_win_hor(board)
@@ -399,13 +426,32 @@ class ComputerPlayer < Player
     return false
   end
 
-  def place_to_block_win_diag#(board)
+  
+  
+  def place_to_block_win_diag(board)
     # opposite of place_to_win
+    left_diagonal = [board.board_grid[0][0], board.board_grid[1][1], board.board_grid[2][2]]
+    right_diagonal= [board.board_grid[0][2], board.board_grid[1][1], board.board_grid[2][0]]
+    if left_diagonal.count { |cell| cell == @human_player.token} == 2 && left_diagonal.any? { |cell| cell.is_a?(Integer) } 
+      puts "place_to_block_win_diagL is true" #debug
+      return true
+    elsif right_diagonal.count { |cell| cell == @human_player.token} == 2 && right_diagonal.any? { |cell| cell.is_a?(Integer) } 
+      puts "place_to_block_win_diagL is true" #debug
+      return true
+    end
+    return false
   end
 
+
+  # fork conditions are pretty complicated. Not implemented in this version.
+  # ****************************************
+  def place_to_fork#(board)
+    # place in location to cause fork scenario
+  end
   def place_to_block_fork#(board)
     # place in location to block a fork
   end
+  # ****************************************
 
   def place_centre(board)
     # Place if centre is open
