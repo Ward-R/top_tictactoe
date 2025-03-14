@@ -326,17 +326,27 @@ class ComputerPlayer < Player
 
     elsif place_empty_corner(board)
       all_corners = [board.board_grid[0][0], board.board_grid[0][2], board.board_grid[2][0], board.board_grid[2][2]]
-      empty_cell = all_corners.find { |cell| cell.is_a?(Integer) }
-      all_corners.each do |cell|
-        if cell.is_a?(Integer) && board.valid_move?(cell)
-          board.place_token(cell, @token)
+      empty_corners = all_corners.select { |cell| cell.is_a?(Integer) } # makes new array of availble corners
+      if empty_corners.any?
+        random_corner = empty_corners.sample
+        if board.valid_move?(random_corner)
+          board.place_token(random_corner, @token)
           puts board.board_display
           return
         end
       end
 
-    elsif place_empty_side
-
+    elsif place_empty_side(board)
+      all_sides = [board.board_grid[0][1], board.board_grid[1][0], board.board_grid[1][2], board.board_grid[2][1]]
+      empty_sides = all_sides.select { |cell| cell.is_a?(Integer) } # makes new array of availble corners
+      if empty_sides.any?
+        random_sides = empty_sides.sample
+        if board.valid_move?(random_sides)
+          board.place_token(random_sides, @token)
+          puts board.board_display
+          return
+        end
+      end
 
     else # currently this is a test method to make the comp to something
       temp_comp_move(board)
@@ -392,18 +402,6 @@ class ComputerPlayer < Player
       return true
     end
     return false
-  
-
-    
-    # I don't know what happened, but i think the code below is wrong.
-    # if left_diagonal == 2 && left_diagonal.any? { |cell| cell.is_a?(Integer) }
-    #   puts "place_to_win_diagL is true" #debug
-    #   return true
-    # elsif right_diagonal == 2 && right_diagonal.any? { |cell| cell.is_a?(Integer) }
-    #   puts "place_to_win_diagr is true" #debug
-    #   return true
-    # end
-    # return false
   end
 
   def place_to_block_win_hor(board)
@@ -443,7 +441,7 @@ class ComputerPlayer < Player
   end
 
 
-  # fork conditions are pretty complicated. Not implemented in this version.
+  # fork conditions are pretty complicated. if implemented, computer will be difficult to beat. Not implemented in this version.
   # ****************************************
   def place_to_fork#(board)
     # place in location to cause fork scenario
@@ -484,8 +482,13 @@ class ComputerPlayer < Player
     return false
   end
 
-  def place_empty_side#(board)
-    # top/bottom/left/right sides
+  def place_empty_side(board)
+    all_sides = [board.board_grid[0][1], board.board_grid[1][0], board.board_grid[1][2], board.board_grid[2][1]]
+    if all_sides.any? { |cell| cell.is_a?(Integer) }
+      puts "place_empty_side is true" #debug
+      return true
+    end
+    return false
   end
 end
 
