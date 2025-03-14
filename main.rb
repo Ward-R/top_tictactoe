@@ -208,7 +208,40 @@ class ComputerPlayer < Player
     
     # *************************************************************************************
     # Below are the methods for the computer token placement
-    if place_to_win_hor(board)
+    if first_move_if_go_first(board)
+      random_number = rand(1..3)
+      case random_number
+      when 1
+        all_sides = [board.board_grid[0][1], board.board_grid[1][0], board.board_grid[1][2], board.board_grid[2][1]]
+        empty_sides = all_sides.select { |cell| cell.is_a?(Integer) } # makes new array of availble corners
+        if empty_sides.any?
+          random_sides = empty_sides.sample
+          if board.valid_move?(random_sides)
+            board.place_token(random_sides, @token)
+            puts board.board_display
+          end
+        end
+        puts "case 1"
+      when 2
+        all_corners = [board.board_grid[0][0], board.board_grid[0][2], board.board_grid[2][0], board.board_grid[2][2]]
+        empty_corners = all_corners.select { |cell| cell.is_a?(Integer) } # makes new array of availble corners
+        if empty_corners.any?
+          random_corner = empty_corners.sample
+          if board.valid_move?(random_corner)
+            board.place_token(random_corner, @token)
+            puts board.board_display
+          end
+        end
+        puts "case 2"
+      when 3
+        board.place_token(5, @token)
+        puts board.board_display
+        puts "case 3"
+      end
+      #elsif first_move_if_go_second(board)
+
+    
+    elsif place_to_win_hor(board)
       # logic to place token in remaining spot
       board.board_grid.each_with_index do |row, row_index|
         if row.count(@token) == 2
@@ -294,8 +327,6 @@ class ComputerPlayer < Player
         end
       end
 
-    # fork conditions are pretty complicated. Not implemented in this version.
-    # ****************************************
     elsif place_to_fork(board)
       left_corners = [board.board_grid[0][0], board.board_grid[2][2]] # this name is poor, they are diagonal corners starting from the top left
       right_corners = [board.board_grid[0][2], board.board_grid[2][0]]
@@ -590,6 +621,21 @@ class ComputerPlayer < Player
     end
     return false
   end
+
+  def first_move_if_go_first(board)
+    if board.board_grid.flatten.all? { |cell| cell.is_a?(Integer)}
+      puts "first move if go first true" #debug
+      return true
+    end
+    return false
+  end
+
+  # def first_move_if_go_second(board)
+  #   if board.board_grid.flatten.count { |cell| cell == @human_player.token} == 1
+  #   puts "first move if go second is true" #debug
+  #   return true
+  #   end
+  # return false
 end
 
 game = Game.new
