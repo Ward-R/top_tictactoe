@@ -221,7 +221,7 @@ class ComputerPlayer < Player
             puts board.board_display
           end
         end
-        puts "case 1"
+        puts "case 1" #debug
       when 2
         all_corners = [board.board_grid[0][0], board.board_grid[0][2], board.board_grid[2][0], board.board_grid[2][2]]
         empty_corners = all_corners.select { |cell| cell.is_a?(Integer) } # makes new array of availble corners
@@ -232,15 +232,49 @@ class ComputerPlayer < Player
             puts board.board_display
           end
         end
-        puts "case 2"
+        puts "case 2" #debug
       when 3
         board.place_token(5, @token)
         puts board.board_display
-        puts "case 3"
+        puts "case 3" #debug
       end
-      #elsif first_move_if_go_second(board)
+    elsif first_move_if_go_second(board)
+      #if player corner
+      all_corners = [board.board_grid[0][0], board.board_grid[0][2], board.board_grid[2][0], board.board_grid[2][2]]
+      all_sides = [board.board_grid[0][1], board.board_grid[1][0], board.board_grid[1][2], board.board_grid[2][1]]
+      if all_corners.any? { |cell| cell == @human_player.token }
+        #put center
+        board.place_token(5, @token)
+        puts board.board_display
+        puts "second move center due to corner" #debug
+        return
+        #elsif player center
+      elsif board.valid_move?(5) == false
+        all_corners = [board.board_grid[0][0], board.board_grid[0][2], board.board_grid[2][0], board.board_grid[2][2]]
+        empty_corners = all_corners.select { |cell| cell.is_a?(Integer) } # makes new array of availble corners
+        if empty_corners.any?
+          random_corner = empty_corners.sample
+          if board.valid_move?(random_corner) # respond with corner
+            board.place_token(random_corner, @token)
+            puts board.board_display
+            puts "second move corner due to centre"
+            return
+          end
+        end
+      elsif all_sides.any? { |cell| cell == @human_player.token  }
+        #elsif player side
+        random_number = rand(1..1) #change back to (1..3)
+        case random_number
+        when 1
+          board.place_token(5, @token)
+          puts board.board_display
+          puts "second move center due to side case 1" #debug
+        #when 2
 
-    
+        #when 3
+        #put either centre, corner next to x, or opposite edge mark (random these)
+        end
+      end 
     elsif place_to_win_hor(board)
       # logic to place token in remaining spot
       board.board_grid.each_with_index do |row, row_index|
@@ -604,7 +638,7 @@ class ComputerPlayer < Player
     return false
   end
 
-  def place_empty_corner(board) # Could improve to use .sample and randomly assign corner. takes first currently.
+  def place_empty_corner(board)
     all_corners = [board.board_grid[0][0], board.board_grid[0][2], board.board_grid[2][0], board.board_grid[2][2]]
     if all_corners.any? { |cell| cell.is_a?(Integer) }
       puts "place_empty_corner is true" #debug
@@ -630,12 +664,13 @@ class ComputerPlayer < Player
     return false
   end
 
-  # def first_move_if_go_second(board)
-  #   if board.board_grid.flatten.count { |cell| cell == @human_player.token} == 1
-  #   puts "first move if go second is true" #debug
-  #   return true
-  #   end
-  # return false
+  def first_move_if_go_second(board)
+    if board.board_grid.flatten.count { |cell| cell == @human_player.token} == 1
+      puts "first move if go second is true" #debug
+      return true
+    end
+    return false
+  end
 end
 
 game = Game.new
