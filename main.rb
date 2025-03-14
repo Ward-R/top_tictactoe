@@ -303,6 +303,23 @@ class ComputerPlayer < Player
         end
       end
 
+    elsif place_empty_corner(board)
+      all_corners = [board.board_grid[0][0], board.board_grid[0][2], board.board_grid[2][0], board.board_grid[2][2]]
+      empty_cell = all_corners.find { |cell| cell.is_a?(Integer) }
+      all_corners.each do |cell|
+        if cell.is_a?(Integer) && board.valid_move?(cell)
+          board.place_token(cell, @token)
+          puts board.board_display
+          return
+        end
+      end
+      
+      # if empty_cell && board.valid_move?(empty_cell)
+      #   board.place_token(empty_cell, @token)
+      #   puts board.board_display
+      #   return
+      # end
+
     elsif place_empty_side
 
 
@@ -317,6 +334,7 @@ class ComputerPlayer < Player
       if cell.is_a?(Integer) && board.valid_move?(cell)
         board.place_token(cell, @token)
         puts board.board_display
+        puts "temp_comp_move default executed" #debug
         return # Exit after placing the token
       end
     end
@@ -402,16 +420,20 @@ class ComputerPlayer < Player
     left_corners = [board.board_grid[0][0], board.board_grid[2][2]]
     right_corners = [board.board_grid[0][2], board.board_grid[2][0]]
     if left_corners.any? { |cell| cell == @human_player.token } && left_corners.any? { |cell| is_a?(Integer) }
+      puts "place_opp_cornerL is true" #debug
       return true
     elsif right_corners.any? { |cell| cell == @human_player.token } && left_corners.any? { |cell| is_a?(Integer) }
+      puts "place_opp_cornerR is true" #debug
       return true
+    end
+    return false
+  end
 
-    # if board.board_grid[0][0] == @human_player.token || board.board_grid[2][2] == @human_player.token
-    #   puts "place_opposite_cornerr true" #debug
-    #   return true
-    # elsif board.board_grid[0][2] == @human_player.token || board.board_grid[2][0] == @human_player.token
-    #   puts "place_opposite_cornerl true" #debug
-    #   return true
+  def place_empty_corner(board) # Could improve to use .sample and randomly assign corner. takes first currently.
+    all_corners = [board.board_grid[0][0], board.board_grid[0][2], board.board_grid[2][0], board.board_grid[2][2]]
+    if all_corners.any? { |cell| cell.is_a?(Integer) }
+      puts "place_empty_corner is true" #debug
+      return true
     end
     return false
   end
