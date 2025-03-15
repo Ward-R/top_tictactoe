@@ -235,7 +235,6 @@ class ComputerPlayer < Player
             puts board.board_display
           end
         end
-        puts "case 1" #debug
       when 2
         all_corners = [board.board_grid[0][0], board.board_grid[0][2], board.board_grid[2][0], board.board_grid[2][2]]
         empty_corners = all_corners.select { |cell| cell.is_a?(Integer) } # makes new array of availble corners
@@ -246,11 +245,9 @@ class ComputerPlayer < Player
             puts board.board_display
           end
         end
-        puts "case 2" #debug
       when 3
         board.place_token(5, @token)
         puts board.board_display
-        puts "case 3" #debug
       end
     elsif first_move_if_go_second(board)
       #if player corner
@@ -260,7 +257,6 @@ class ComputerPlayer < Player
         #put center
         board.place_token(5, @token)
         puts board.board_display
-        puts "second move center due to corner" #debug
         return
         #elsif player center
       elsif board.valid_move?(5) == false
@@ -271,20 +267,18 @@ class ComputerPlayer < Player
           if board.valid_move?(random_corner) # respond with corner
             board.place_token(random_corner, @token)
             puts board.board_display
-            puts "second move corner due to centre"
             return
           end
         end
       elsif all_sides.any? { |cell| cell == @human_player.token  }
-        #elsif player side
+        #elsif player side any three cases ok for second move
         random_number = rand(1..3)
         player_side_location = all_sides.find { |cell| cell == @human_player.token }
         case random_number
-        when 1
+        when 1 # If player places side, place middle
           board.place_token(5, @token)
           puts board.board_display
-          puts "second move center due to side case 1" #debug
-        when 2
+        when 2 # if player places side, place adjacent corner
           if board.board_grid[1][0] == @human_player.token
             board.place_token(1, @token)
             puts board.board_display
@@ -302,7 +296,7 @@ class ComputerPlayer < Player
             puts board.board_display
             return
           end
-        when 3
+        when 3 # if player places side, place opposite side
           if board.board_grid[1][0] == @human_player.token
             board.place_token(6, @token)
             puts board.board_display
@@ -541,7 +535,6 @@ class ComputerPlayer < Player
       if cell.is_a?(Integer) && board.valid_move?(cell)
         board.place_token(cell, @token)
         puts board.board_display
-        puts "temp_comp_move default executed" #debug
         return # Exit after placing the token
       end
     end
@@ -555,7 +548,6 @@ class ComputerPlayer < Player
     # checks if horizontal move will win game
     board.board_grid.each do |row|
       if row.count { |cell| cell == @token} == 2 && row.any? { |cell| cell.is_a?(Integer) }
-        puts "place_to_win_hor is true" #debug
         return true
       end
     end
@@ -566,7 +558,6 @@ class ComputerPlayer < Player
     # checks if vertical move will win game
     board.board_grid.transpose.each do |row|
       if row.count { |cell| cell == @token} == 2 && row.any? { |cell| cell.is_a?(Integer) }
-        puts "place_to_win_vert is true" #debug
         return true
       end
     end
@@ -577,10 +568,8 @@ class ComputerPlayer < Player
     left_diagonal = [board.board_grid[0][0], board.board_grid[1][1], board.board_grid[2][2]]
     right_diagonal = [board.board_grid[0][2], board.board_grid[1][1], board.board_grid[2][0]]
     if left_diagonal.count { |cell| cell == @token} == 2 && left_diagonal.any? { |cell| cell.is_a?(Integer) } 
-      puts "place_to_win_diagL is true" #debug
       return true
     elsif right_diagonal.count { |cell| cell == @token} == 2 && right_diagonal.any? { |cell| cell.is_a?(Integer) } 
-      puts "place_to_win_diagL is true" #debug
       return true
     end
     return false
@@ -590,7 +579,6 @@ class ComputerPlayer < Player
     # opposite of place_to_win
     board.board_grid.each do |row|
       if row.count { |cell| cell == @human_player.token} == 2 && row.any? { |cell| cell.is_a?(Integer) }
-        puts "place_to_block_win_hor is true" #debug
         return true
       end
     end
@@ -599,7 +587,6 @@ class ComputerPlayer < Player
   def place_to_block_win_vert(board)
     board.board_grid.transpose.each do |row|
       if row.count { |cell| cell == @human_player.token} == 2 && row.any? { |cell| cell.is_a?(Integer) }
-        puts "place_to_block_win_vert is true" #debug
         return true
       end
     end
@@ -610,10 +597,8 @@ class ComputerPlayer < Player
     left_diagonal = [board.board_grid[0][0], board.board_grid[1][1], board.board_grid[2][2]]
     right_diagonal= [board.board_grid[0][2], board.board_grid[1][1], board.board_grid[2][0]]
     if left_diagonal.count { |cell| cell == @human_player.token} == 2 && left_diagonal.any? { |cell| cell.is_a?(Integer) } 
-      puts "place_to_block_win_diagL is true" #debug
       return true
     elsif right_diagonal.count { |cell| cell == @human_player.token} == 2 && right_diagonal.any? { |cell| cell.is_a?(Integer) } 
-      puts "place_to_block_win_diagL is true" #debug
       return true
     end
     return false
@@ -627,16 +612,12 @@ class ComputerPlayer < Player
     top_right_v = [board.board_grid[0][1], board.board_grid[0][2], board.board_grid[1][2]]
     bottom_left_v = [board.board_grid[1][0], board.board_grid[2][0], board.board_grid[2][1]]
     if left_corners.all? { |cell| cell == @token } && top_right_v.all? { |cell| cell.is_a?(Integer)}
-      puts "place_to_fork true" #debug
       return true
     elsif left_corners.all? { |cell| cell == @token } && bottom_left_v.all? { |cell| cell.is_a?(Integer)}
-      puts "place_to_fork true" #debug
       return true
     elsif right_corners.all? { |cell| cell == @token } && top_left_v.all? { |cell| cell.is_a?(Integer)}
-      puts "place_to_fork true" #debug
       return true
     elsif right_corners.all? { |cell| cell == @token } && bottom_right_v.all? { |cell| cell.is_a?(Integer)}
-      puts "place_to_fork true" #debug
       return true
     end
   end
@@ -649,16 +630,12 @@ class ComputerPlayer < Player
     top_right_v = [board.board_grid[0][1], board.board_grid[0][2], board.board_grid[1][2]]
     bottom_left_v = [board.board_grid[1][0], board.board_grid[2][0], board.board_grid[2][1]]
     if left_corners.all? { |cell| cell == @human_player.token } && top_right_v.all? { |cell| cell.is_a?(Integer)}
-      puts "place_to_block_fork true" #debug
       return true
     elsif left_corners.all? { |cell| cell == @human_player.token } && bottom_left_v.all? { |cell| cell.is_a?(Integer)}
-      puts "place_to_block_fork true" #debug
       return true
     elsif right_corners.all? { |cell| cell == @human_player.token } && top_left_v.all? { |cell| cell.is_a?(Integer)}
-      puts "place_to_block_fork true" #debug
       return true
     elsif right_corners.all? { |cell| cell == @human_player.token } && bottom_right_v.all? { |cell| cell.is_a?(Integer)}
-      puts "place_to_block_fork true" #debug
       return true
     end
   end
@@ -666,7 +643,6 @@ class ComputerPlayer < Player
   def place_centre(board)
     # Place if centre is open
     if board.valid_move?(5) == true
-      puts "place_centre is true" #debug
       return true
     end
     return false
@@ -676,10 +652,8 @@ class ComputerPlayer < Player
     left_corners = [board.board_grid[0][0], board.board_grid[2][2]]
     right_corners = [board.board_grid[0][2], board.board_grid[2][0]]
     if left_corners.any? { |cell| cell == @human_player.token } && left_corners.any? { |cell| is_a?(Integer) }
-      puts "place_opp_cornerL is true" #debug
       return true
     elsif right_corners.any? { |cell| cell == @human_player.token } && left_corners.any? { |cell| is_a?(Integer) }
-      puts "place_opp_cornerR is true" #debug
       return true
     end
     return false
@@ -688,7 +662,6 @@ class ComputerPlayer < Player
   def place_empty_corner(board)
     all_corners = [board.board_grid[0][0], board.board_grid[0][2], board.board_grid[2][0], board.board_grid[2][2]]
     if all_corners.any? { |cell| cell.is_a?(Integer) }
-      puts "place_empty_corner is true" #debug
       return true
     end
     return false
@@ -697,7 +670,6 @@ class ComputerPlayer < Player
   def place_empty_side(board)
     all_sides = [board.board_grid[0][1], board.board_grid[1][0], board.board_grid[1][2], board.board_grid[2][1]]
     if all_sides.any? { |cell| cell.is_a?(Integer) }
-      puts "place_empty_side is true" #debug
       return true
     end
     return false
@@ -705,7 +677,6 @@ class ComputerPlayer < Player
 
   def first_move_if_go_first(board)
     if board.board_grid.flatten.all? { |cell| cell.is_a?(Integer)}
-      puts "first move if go first true" #debug
       return true
     end
     return false
@@ -713,7 +684,6 @@ class ComputerPlayer < Player
 
   def first_move_if_go_second(board)
     if board.board_grid.flatten.count { |cell| cell == @human_player.token} == 1 && board.board_grid.flatten.count { |cell| cell == @token} == 0
-      puts "first move if go second is true" #debug
       return true
     end
     return false
