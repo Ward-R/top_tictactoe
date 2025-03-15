@@ -154,22 +154,22 @@ class Game
   end
 
   def win_condition
-    if check_rows("X")
+    if check_rows(red("X"))
       puts "X wins"
       @game_over = true
-    elsif check_columns("X")
+    elsif check_columns(red("X"))
       puts "X wins"
       @game_over = true
-    elsif check_diagonals("X")
+    elsif check_diagonals(red("X"))
       puts "X wins"
       @game_over = true
-    elsif check_rows("O")
+    elsif check_rows(blue("O"))
       puts "O wins"
       @game_over = true
-    elsif check_columns("O")
+    elsif check_columns(blue("O"))
       puts "O wins"
       @game_over = true
-    elsif check_diagonals("O")
+    elsif check_diagonals(blue("O"))
       puts "O wins"
       @game_over = true
     end
@@ -712,7 +712,7 @@ class ComputerPlayer < Player
   end
 
   def first_move_if_go_second(board)
-    if board.board_grid.flatten.count { |cell| cell == @human_player.token} == 1
+    if board.board_grid.flatten.count { |cell| cell == @human_player.token} == 1 && board.board_grid.flatten.count { |cell| cell == @token} == 0
       puts "first move if go second is true" #debug
       return true
     end
