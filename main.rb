@@ -50,10 +50,10 @@ class Game
   def run
     # Main game loop
     count = 0 # turn counter for draw condition
+    system('clear')
     puts "Welcome to Tic-Tac-Toe!"
     puts "Lets roll to see who goes first"
     goes_first
-    puts "Human is #{@human_player.token}"
     puts "Computer is #{@computer_player.token}"
     puts @board.board_display
     
@@ -95,18 +95,32 @@ class Game
     puts "Game over, thanks for playing!"
   end
 
+  def colorize(text, color_code)
+    "\e[#{color_code}m#{text}\e[0m"
+  end
+  
+  def red(text)
+    colorize(text, 31)
+  end
+  
+  def blue(text)
+    colorize(text, 34)
+  end
+
   def goes_first
     random_binary = rand(2) # outputs 0 or 1
+    
+    
     if random_binary == 0
       puts "Human got heads and goes first as 'X'"
       @human_player.is_first = true
-      @human_player.assign_token("X")
-      @computer_player.assign_token("O")
+      @human_player.assign_token(red("X"))
+      @computer_player.assign_token(blue("O"))
     else
       puts "Computer got heads and goes first as 'X'"
       @computer_player.is_first = true
-      @computer_player.assign_token("X")
-      @human_player.assign_token("O")
+      @computer_player.assign_token(red("X"))
+      @human_player.assign_token(blue("O"))
     end
   end
 
@@ -179,7 +193,7 @@ class HumanPlayer < Player
   
   def human_move(board)
     loop do
-      puts "Human - Choose a location for your token"
+      puts "Choose a location for your token #{@token}"
       print ">> "
       location = gets.chomp.to_i
 
